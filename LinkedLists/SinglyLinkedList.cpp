@@ -1,5 +1,5 @@
 #include <iostream>
-
+#include <assert.h>
 class Node
 {
 public:
@@ -61,6 +61,7 @@ public:
         if (head == nullptr)
         {
             std::cout << "List is empty" << '\n';
+            return;
         }
         else
         {
@@ -74,6 +75,7 @@ public:
             std::cout << '\n';
         }
     }
+
     void insert(int index, int value)
     {
         Node *tmp = new Node();
@@ -106,6 +108,7 @@ public:
         else if (index < 0)
         {
             std::cout << "not valid index, maybe you use negative value or value greater than the length of the Linked list" << '\n';
+            assert(index >= 0);
             return;
         }
         for (int i = 0; i < index; ++i)
@@ -134,6 +137,26 @@ public:
         }
         head = prevnode;
     }
+    void get(int index)
+    {
+
+        if (head == nullptr)
+        {
+            std::cout << "List is empty" << '\n';
+            assert(head != nullptr);
+        }
+        else if (index > length - 1 || index < 0)
+        {
+            std::cout << "Not valid index" << '\n';
+            assert(index > 0 && index < length - 1);
+        }
+        Node *current = head;
+        for (int i = 0; i < index; ++i)
+        {
+            current = current->next;
+        }
+        std::cout << current->data << '\n';
+    }
 };
 
 int main()
@@ -144,9 +167,12 @@ int main()
     L.append(5);
     L.prepend(4);
     L.insert(2, 6);
-    // L.erase(1);
+    L.display();
+    std::cout << L.length - 1 << " element = ";
+    L.get(L.length - 1);
+    L.erase(1);
     L.reverse();
     L.display();
-    std::cout << L.length;
+    std::cout << L.length << '\n';
     return 0;
 }
