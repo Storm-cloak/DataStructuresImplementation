@@ -5,6 +5,7 @@ class Node
 public:
     int data;
     Node *next;
+    Node *prev;
 };
 
 class LinkedList
@@ -25,6 +26,7 @@ public:
         Node *tmp = new Node();
         tmp->data = value;
         tmp->next = nullptr;
+        tmp->prev = nullptr;
         if (head == nullptr)
         {
             head = tmp;
@@ -32,8 +34,9 @@ public:
         }
         else
         {
+            tmp->prev = tail;
             tail->next = tmp;
-            tail = tmp;
+            tail = tail->next;
         }
         length += 1;
     }
@@ -43,6 +46,7 @@ public:
         Node *tmp = new Node();
         tmp->data = value;
         tmp->next = nullptr;
+        tmp->prev = nullptr;
         if (head == nullptr)
         {
             tail = tmp;
@@ -51,6 +55,7 @@ public:
         else
         {
             tmp->next = head;
+            head->prev = tmp;
             head = tmp;
         }
         length += 1;
@@ -78,9 +83,16 @@ public:
 
     void insert(int index, int value)
     {
+        if (index < 0 || index > length)
+        {
+            std::cout << "not valid index, maybe you use negative value or value greater than the length of the Linked list" << '\n';
+            assert(index >= 0);
+            return;
+        }
         Node *current = new Node();
         current->data = value;
         current->next = nullptr;
+        current->prev = nullptr;
         if (head == nullptr)
         {
             head = current;
@@ -89,32 +101,30 @@ public:
         else if (index == 0) // insert before head
         {
             current->next = head;
+            head->prev = current;
             head = current;
         }
         else if (index == length) // insert after tail
         {
             tail->next = current;
+            current->prev = tail;
             tail = current;
         }
         else
         {
-            Node *prev = new Node();
-            Node *tmp = new Node();
             current = head;
-            for (int i = 0; i < index; ++i) //0 1
+            for (int i = 0; i < index; i++) // 0  1
             {
-                prev = current;          //1stIt    prev = head = 4, 2ndIt   prev = 2
-                current = current->next; //1stIT current = 2 , 2ndIt current = 1;
+                current = current->next;
             }
+            Node *tmp = new Node();
             tmp->data = value;
-            prev->next = tmp;
             tmp->next = current;
+            tmp->prev = current->prev;
+            current->prev->next = tmp;
+            current->prev = tmp;
         }
-        length += 1;
-        // 4 -> 2 -> 1 ->5    4 -> 2 -> 6 -> 1  -> 5
-
-        // insert(3,6):  4 -> 2 -> 1         4 -> 2 -> 1 -> 6
-        // 0    1    2   3
+        length++;
     }
     void erase(int index)
     {
@@ -135,31 +145,31 @@ public:
         }
         for (int i = 0; i < index; ++i)
         {
-            prev = current;
             current = current->next;
         }
-        prev->next = current->next;
+        current->prev->next = current->next;
+        current->next->prev = current->prev;
         delete current;
         length -= 1;
     }
+
     void reverse()
     {
-        Node *current = head;
-        Node *nextnode = NULL;
-        Node *prevnode = NULL;
+        Node *temp = NULL;
+        Node *current = new Node();
+        current = head;
         while (current != NULL)
         {
-            // Store next
-            nextnode = current->next;
-            // Reverse current node's pointer
-            current->next = prevnode;
-            // Move pointers one position ahead.
-            prevnode = current;
-            current = nextnode;
+            temp = current->next;
+            current->next = current->prev;
+            current->prev = temp;
+            current = temp;
         }
-        head = prevnode;
-    } // 4 2 1 8
-      //
+        temp = head;
+        head = tail;
+        tail = temp;
+    }
+
     void get(int index)
     {
 
@@ -173,12 +183,25 @@ public:
             std::cout << "Not valid index" << '\n';
             assert(index > 0 && index < length - 1);
         }
-        Node *current = head;
-        for (int i = 0; i < index; ++i)
+        //choose best option to search (from head or from tail)
+        if (index + 1 <= length / 2)
         {
-            current = current->next;
+            Node *current = head;
+            for (int i = 0; i < index; ++i)
+            {
+                current = current->next;
+            }
+            std::cout << current->data << '\n';
         }
-        std::cout << current->data << '\n';
+        else
+        {
+            Node *current = tail;
+            for (int i = length - 1; i > index; --i)
+            {
+                current = current->prev;
+            }
+            std::cout << current->data << '\n';
+        }
     }
 };
 
@@ -188,16 +211,14 @@ int main()
     L.append(4);
     L.append(2);
     L.append(1);
-    // L.append(5);
+    L.prepend(8);
+    L.prepend(10);
     L.insert(3, 6);
-    L.append(5);
+    L.erase(2);
+    L.get(4);
     L.display();
-    L.prepend(4);
-    L.display();
-    // std::cout << L.length << " element = ";
-    L.get(L.length - 1);
     L.reverse();
     L.display();
-    std::cout << L.length << '\n';
+    // std::cout << L.length << '\n';
     return 0;
 }
