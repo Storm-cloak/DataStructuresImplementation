@@ -184,7 +184,14 @@ public:
 
 int main()
 {
+    //Allocates some automatic memory, and creates an object in that
+    //memory using its default constructor.
+    //The memory is released automatically when the object goes out of scope.(Stack)
     LinkedList L;
+    // Allocates some dynamic memory from the free store, and
+    // creates an object in that memory using its default constructor.
+    // Don't forget to delete it or the memory will be leaked.(Heap)
+    LinkedList *L2 = new LinkedList();
     L.append(4);
     L.append(2);
     L.append(1);
