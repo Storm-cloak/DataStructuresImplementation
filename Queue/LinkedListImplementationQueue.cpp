@@ -12,13 +12,14 @@ class Queue
 {
 private:
     node *front, *back;
+    int len;
 
 public:
-    int size = 0;
     Queue()
     {
         front = nullptr;
         back = nullptr;
+        len = 0;
     };
     void push_back(int value)
     {
@@ -26,15 +27,15 @@ public:
         tmp->data = value;
 
         //if Queue is empty then front = back = newNode;
-        if (size == 0)
+        if (len == 0)
         {
             front = back = tmp;
-            size++;
+            len++;
             return;
         }
         back->next = tmp;
         back = tmp;
-        size++;
+        len++;
     };
     void pop_front()
     {
@@ -55,13 +56,18 @@ public:
         {
             back == nullptr;
         }
-        size--;
+        len--;
         delete tmp;
-    }
+    };
+
+    int size()
+    {
+        return len;
+    };
     // if queue is empty returns true
     bool empty()
     {
-        if (size == 0)
+        if (len == 0)
         {
             return 1;
         }
@@ -88,7 +94,7 @@ public:
 
 // QUEUE methods: FIFO - first in first out
 //   +empty
-//   +size
+//   +len
 //   +front
 //   +back
 //   +push_back
@@ -102,6 +108,6 @@ int main()
     Q.push_back(10);
     Q.pop_front();
     int f = Q.get_front();
-    std::cout << f << '\n'
-              << Q.size << '\n';
+    std::cout << f << '\n';
+    std::cout << Q.size() << '\n';
 };
